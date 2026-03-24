@@ -10,6 +10,25 @@
                         // и реализовывать функции, согласно вашему заданию
 using namespace std;
 // функция добавления данных
+
+// структура — анкета на машину
+struct Auto {
+    string id;           // номер в базе 
+    string marka;        // марка
+    string model;        // модель (Camry 3.5)
+    int god;             // год выпуска
+    string kuzov;        // седан, джип и т.д.
+    string nomer;        // гос. номер или VIN
+    int cena;            // цена в рублях
+};
+
+// Массив на 100 машин
+Auto baza[100];
+int countCars = 0;  // сколько машин сейчас в базе
+
+// Имя файла, куда сохроняеться
+string fileName = "autos.txt";
+
 bool LOGIN_IN() {
     string login;
     string password;
@@ -33,30 +52,166 @@ bool LOGIN_IN() {
         return false;
     }
 }
+
 void AddData()
 {
-    system("cls");
-    cout << "Добавление данных:\n";
+    system("cls");  // Очистка экрана
+    cout << "Добавить автомабиль :\n";
     // здесь реализуете свой алгоритм
+
+    cout << "Введите ID: ";
+    getline(cin, baza[countCars].id);
+
+    cout << "Введите Марку: ";
+    getline(cin, baza[countCars].marka);
+
+    cout << "Введите Модель: ";
+    getline(cin, baza[countCars].model);
+
+    cout << "Введите Год: ";
+    cin >> baza[countCars].god;
+
+    cin.ignore();
+
+    cout << "Введите Кузов: ";
+    getline(cin, baza[countCars].kuzov);
+
+    cout << "Введите Номер: ";
+    getline(cin, baza[countCars].nomer);
+
+    cout << "Введите Цену: ";
+    cin >> baza[countCars].cena;
+
+    cin.ignore();
+
+    countCars++;
+
+    cout << "\nДобавлено! Нажмите клавишу...";
     _getch();
 }
-// функция печати данных
+
 void PrintData()
 {
-    system("cls");
-    cout << "Список студентов:\n";
-    // здесь реализуете свой алгоритм
+    system("cls"); // Очистка экрана
+    cout << "Список автомобилей:\n\n";
+
+    // Проверка
+    if (countCars == 0) {
+        cout << "База пуста. Добавьте автомобили!\n";
+    }
+    else {
+        // Заголовок таблицы
+        cout << "№ | ID | Марка Модель | Год | Кузов | Номер | Цена\n";
+        cout << "--------------------------------------------------\n";
+
+        // Цикл: перебираем ВСЕ заполненные ячейки массива
+        for (int i = 0; i < countCars; i++) {
+            //  Выводим данные одной машины в одну строку
+            cout << i + 1 << " | "                    // номер по порядку 
+                << baza[i].id << " | "             // ID автомобиля
+                << baza[i].marka << " "            // марка + пробел
+                << baza[i].model << " | "          // модель + разделитель
+                << baza[i].god << " | "            // год
+                << baza[i].kuzov << " | "          // тип кузова
+                << baza[i].nomer << " | "          // гос. номер
+                << baza[i].cena << " руб.\n";      // цена + "руб." + новая строка
+        }
+
+        // Итоговая информация
+        cout << "--------------------------------------------------\n";
+        cout << "Всего автомобилей: " << countCars << "\n";
+    }
+
+    // ожидания нажатия клавиши 
+    cout << "\nНажмите любую клавишу...";
     _getch();
 }
-// функция редактирования данных
+
 void EditData()
 {
     system("cls");
-    cout << "Редактирование данных:\n";
-    // здесь реализуете свой алгоритм
+    cout << "Редактирование данных:\n\n";
+
+    // Проверка
+    if (countCars == 0) {
+        cout << "База пуста! Нечего редактировать.\n";
+        cout << "Нажмите любую клавишу...";
+        _getch();
+        return; // Выходит из функции 
+    }
+
+    // Просим ввести ID автомобиля, который хотим изменить
+    cout << "Введите ID автомобиля для редактирования: ";
+    string searchId;                        // Переменная для поиска
+    std::getline(std::cin, searchId);       // Читаем строку (std:: обязательно!)
+
+    // 8. Ищем автомобиль с таким ID в массиве
+    int index = -1;                         // Переменная для номера найденной машины (-1 = не найдено)
+
+    for (int i = 0; i < countCars; i++) {   // Перебираем все заполненные ячейки
+        if (baza[i].id == searchId) {       // Если нашли совпадение по ID
+            index = i;                      // Запоминаем номер ячейки
+            break;                          // Выходим из цикла (дальше искать не надо)
+        }
+    }
+
+    // Проверяем: нашли или нет?
+    if (index == -1) {                      // Если index не изменился — не нашли
+        cout << "\nАвтомобиль с ID '" << searchId << "' не найден!\n";
+        cout << "Нажмите любую клавишу...";
+        _getch();
+        return;                             // Выходим, ничего не меняли
+    }
+
+    // Если нашли — показываем старые данные
+    cout << "\nНайдено! Текущие данные:\n";
+    cout << "Марка: " << baza[index].marka << "\n";
+    cout << "Модель: " << baza[index].model << "\n";
+    cout << "Год: " << baza[index].god << "\n";
+    cout << "Кузов: " << baza[index].kuzov << "\n";
+    cout << "Номер: " << baza[index].nomer << "\n";
+    cout << "Цена: " << baza[index].cena << " руб.\n";
+
+    // Теперь вводим новые значения
+    cout << "\nВведите новые данные (оставьте пустым, чтобы не менять):\n";
+
+    cout << "Новая марка [" << baza[index].marka << "]: ";
+    string temp;                            // Временная переменная для ввода
+    std::getline(std::cin, temp);           // Читаем ввод
+    if (!temp.empty()) {                    // Если пользователь что-то ввёл
+        baza[index].marka = temp;           // Заменяем старое значение на новое
+    }
+
+    cout << "Новая модель [" << baza[index].model << "]: ";
+    std::getline(std::cin, temp);
+    if (!temp.empty()) baza[index].model = temp;
+
+    cout << "Новый год [" << baza[index].god << "]: ";
+    std::getline(std::cin, temp);
+    if (!temp.empty()) {
+        baza[index].god = stoi(temp);       // stoi() — строку в число (string to int)
+    }
+
+    cout << "Новый кузов [" << baza[index].kuzov << "]: ";
+    std::getline(std::cin, temp);
+    if (!temp.empty()) baza[index].kuzov = temp;
+
+    cout << "Новый номер [" << baza[index].nomer << "]: ";
+    std::getline(std::cin, temp);
+    if (!temp.empty()) baza[index].nomer = temp;
+
+    cout << "Новая цена [" << baza[index].cena << "]: ";
+    std::getline(std::cin, temp);
+    if (!temp.empty()) {
+        baza[index].cena = stoi(temp);      // Преобразуем строку в число
+    }
+
+    // Сообщение об успехе
+    cout << "\n Данные обновлены!\n";
+    cout << "Нажмите любую клавишу...";
     _getch();
 }
-// функция удаления данных
+
 void DeleteData()
 {
     system("cls");
@@ -64,7 +219,7 @@ void DeleteData()
     // здесь реализуете свой алгоритм
     _getch();
 }
-// функция печати данных по критерию отбора
+
 void PrintFilteredData()
 {
     system("cls");
@@ -72,13 +227,13 @@ void PrintFilteredData()
     // здесь реализуете свой алгоритм
     _getch();
 }
-// функция сохранения данных
+
 bool SaveData()
 {
     // реализуйте здесь алгоритм сохранения базы данных в файле
     return true;
 }
-// функция печати справки
+
 void PrintHelp()
 {
     // Выводите текст справки на экран
@@ -89,7 +244,7 @@ void PrintHelp()
     // здесь реализуете свой алгоритм справки
     _getch();
 }
-// функция загрузки данных
+
 bool LoadData()
 {
     // реализуйте здесь алгоритм чтения базы данных из файла
@@ -179,6 +334,8 @@ int main()
         return 0; // Выход из программs   если пароль неверный
     }
     setlocale(LC_ALL, "");
+    AddData();
+    PrintData();
     if (!LoadData()) // если чтение базы данных неудачно, то продолжение выполнения программы невозможно
     {       // выводим сообщение об ошибке и выходим с кодом 1
         cout << "Ошибка чтения базы данных\n";
@@ -188,6 +345,4 @@ int main()
     }
     HandleEvents(); // вызываем функцию обработки нажатий клавиш пользователем
     SaveData(); // при выходе сохраняем данные в базе данных
-
-
 }
