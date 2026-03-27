@@ -215,22 +215,112 @@ void EditData()
 void DeleteData()
 {
     system("cls");
-    cout << "Введите Ид удаляемого студента:\n";
-    // здесь реализуете свой алгоритм
+    cout << "Введите ID удаляемого автомобиля:\n";
+
+    if (countCars == 0) {
+        cout << "База пуста! Нечего удалять.\n";
+        cout << "Нажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    string delId;
+    cout << "ID: ";
+    getline(cin, delId);
+
+    int index = -1;
+    for (int i = 0; i < countCars; i++) {
+        if (baza[i].id == delId) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        cout << "\nАвтомобиль с ID '" << delId << "' не найден!\n";
+        cout << "Нажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    // Сдвигаем элементы влево
+    for (int i = index; i < countCars - 1; i++) {
+        baza[i] = baza[i + 1];
+    }
+    countCars--;
+
+    cout << "\nАвтомобиль удалён!\n";
+    cout << "Нажмите любую клавишу...";
     _getch();
 }
 
 void PrintFilteredData()
 {
     system("cls");
-    cout << "Список студентов - отличников:\n"; // например выводим только отличников
-    // здесь реализуете свой алгоритм
+    cout << "Автомобили дороже среднего:\n\n";
+
+    if (countCars == 0) {
+        cout << "База пуста!\n";
+        cout << "Нажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    // Считаем среднюю цену
+    double sum = 0;
+    for (int i = 0; i < countCars; i++) {
+        sum += baza[i].cena;
+    }
+    double avg = sum / countCars;
+
+    cout << "Средняя цена: " << avg << " руб.\n";
+    cout << "----------------------------------------\n";
+
+    bool found = false;
+    for (int i = 0; i < countCars; i++) {
+        if (baza[i].cena > avg) {
+            cout << "ID: " << baza[i].id << "\n"
+                << "Марка: " << baza[i].marka << "\n"
+                << "Модель: " << baza[i].model << "\n"
+                << "Год: " << baza[i].god << "\n"
+                << "Кузов: " << baza[i].kuzov << "\n"
+                << "Номер: " << baza[i].nomer << "\n"
+                << "Цена: " << baza[i].cena << " руб.\n"
+                << "----------------------------------------\n";
+            found = true;
+        }
+    }
+
+    if (!found) {
+        cout << "Нет автомобилей дороже среднего.\n";
+    }
+
+    cout << "\nНажмите любую клавишу...";
     _getch();
 }
 
 bool SaveData()
 {
-    // реализуйте здесь алгоритм сохранения базы данных в файле
+    ofstream outFile(fileName);
+    if (!outFile.is_open()) {
+        cout << "Ошибка: не удалось открыть файл для записи!\n";
+        return false;
+    }
+
+    outFile << countCars << endl;
+
+    for (int i = 0; i < countCars; i++) {
+        outFile << baza[i].id << endl;
+        outFile << baza[i].marka << endl;
+        outFile << baza[i].model << endl;
+        outFile << baza[i].god << endl;
+        outFile << baza[i].kuzov << endl;
+        outFile << baza[i].nomer << endl;
+        outFile << baza[i].cena << endl;
+    }
+
+    outFile.close();
+    cout << "Данные сохранены в файл " << fileName << endl;
     return true;
 }
 
@@ -240,6 +330,17 @@ void PrintHelp()
     // Рекомендую создать текстовый файл справки
     // а здесь прочитать текст из него и вывести в консоль
     system("cls");
+    cout << "========================= СПРАВКА =========================\n";
+    cout << "1. Добавить автомобиль – введите данные о новом автомобиле.\n";
+    cout << "2. Вывод списка – показывает все машины в табличном виде.\n";
+    cout << "3. Поиск по номеру – находит автомобиль по госномеру/VIN.\n";
+    cout << "4. Поиск по марке – показывает все автомобили указанной марки.\n";
+    cout << "5. Поиск по модели – показывает все автомобили указанной модели.\n";
+    cout << "6. Поиск по кузову – показывает все автомобили с указанным типом кузова.\n";
+    cout << "7. Удалить по ID – удаляет запись по уникальному идентификатору.\n";
+    cout << "8. Выйти – завершает работу и сохраняет данные.\n";
+    cout << "==========================================================\n";
+    cout << "\nНажмите любую клавишу...";
     cout << "Справка:\n"; // например выводим только отличников
     // здесь реализуете свой алгоритм справки
     _getch();
@@ -247,8 +348,40 @@ void PrintHelp()
 
 bool LoadData()
 {
-    // реализуйте здесь алгоритм чтения базы данных из файла
-    // возвращайте true, если чтение прошло успешно и false в противном случае
+    ifstream inFile(fileName);
+    if (!inFile.is_open()) {
+        cout << "Файл базы данных не найден. Будет создана новая база.\n";
+        return false;
+    }
+
+    int loadedCount;
+    inFile >> loadedCount;
+    if (loadedCount > 100) {
+        cout << "Ошибка: в файле больше записей, чем может вместить программа.\n";
+        inFile.close();
+        return false;
+    }
+
+    countCars = 0;
+    for (int i = 0; i < loadedCount; i++) {
+        string temp;
+        getline(inFile, temp); // скипаем перевод строки после числа
+
+        if (!getline(inFile, baza[i].id)) break;
+        if (!getline(inFile, baza[i].marka)) break;
+        if (!getline(inFile, baza[i].model)) break;
+        if (!(inFile >> baza[i].god)) break;
+        inFile.ignore();
+        if (!getline(inFile, baza[i].kuzov)) break;
+        if (!getline(inFile, baza[i].nomer)) break;
+        if (!(inFile >> baza[i].cena)) break;
+        inFile.ignore();
+
+        countCars++;
+    }
+
+    inFile.close();
+    cout << "Загружено " << countCars << " записей из файла " << fileName << endl;
     return true;
 }
 // вывод в консоль меню программы
