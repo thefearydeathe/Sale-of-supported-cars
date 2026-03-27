@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <fstream>
 #include <string>
+#include "lib.h"
 // #include "students.h"// подключаем свою библиотеку работы со связным списком
                         // список должен хранить данные о вашей предметной области
                         // и реализовывать функции, согласно вашему заданию
@@ -324,8 +325,49 @@ bool SaveData()
     return true;
 }
 
+// Функция центрирования текста
+std::string CenterText(const std::string& text, size_t width, char filler = ' ')
+{
+
+    const int LX = 80;
+    const int LY = 60;
+
+
+
+
+
+    //задаем ширину и высоту только после этого у нас будет работать!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+    // Вычисляем отступы
+    size_t totalIndent = width - text.length();
+    size_t leftIndent = totalIndent / 2;           // Левый отступ
+    size_t rightIndent = totalIndent - leftIndent; // Правый отступ 
+
+    // Формируем результирующую строку
+    return std::string(leftIndent, filler) + text + std::string(rightIndent, filler);
+}
+
+int alignment()
+{
+    std::string title = "МЕНЮ";
+
+    std::string option = "Выбрать автомобиль";
+
+    const size_t consoleWidth = 0;
+    std::cout << CenterText(title, consoleWidth, '=') << std::endl;
+    std::cout << CenterText("2. Выход", consoleWidth) << std::endl;
+    std::cout << std::string(consoleWidth, '=') << std::endl;
+    return 0;
+
+}
+
+
 void PrintHelp()
 {
+   
+
     // Выводите текст справки на экран
     // Рекомендую создать текстовый файл справки
     // а здесь прочитать текст из него и вывести в консоль
