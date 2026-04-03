@@ -11,19 +11,15 @@
                         // и реализовывать функции, согласно вашему заданию
 using namespace std;
 // функция добавления данных
-
-
-// структура — анкета на машину
 struct Auto {
     string id;           // номер в базе 
     string marka;        // марка
-    string model;        // модель (Camry 3.5)
+    string model;        // модель
     int god;             // год выпуска
     string kuzov;        // седан, джип и т.д.
     string nomer;        // гос. номер или VIN
     int cena;            // цена в рублях
 };
-
 // Массив на 100 машин
 Auto baza[100];
 int countCars = 0;  // сколько машин сейчас в базе
@@ -34,64 +30,61 @@ string fileName = "autos.txt";
 bool LOGIN_IN() {
     string login;
     string password;
+    const string CORRECT_LOGIN = "Admin";
+    const string CORRECT_PASS = "0000";
 
-    cout << "ВХОД В СИСТЕМУ " << endl;
+    SetTextColor(15);
+    cout << "=== ВХОД В СИСТЕМУ ===" << endl;
+    while (true) {
+        // Ввод логина
+        cout << "\nВведите логин: ";
+        getline(cin, login);
 
-    // Ввод логина
-    cout << "Введите логин: ";
-    getline(cin, login);
+        // Ввод пароля
+        cout << "Введите пароль: ";
+        getline(cin, password);
 
-    // Ввод пароля
-    cout << "Введите пароль: ";
-    getline(cin, password);
-
-    if (login == "Admin" && password == "0000") {
-        cout << "\nУспешный вход! Добро пожаловать, " << login << "." << endl;
-        return true;
-    }
-    else {
-        cout << "\nОшибка: Неверный логин или пароль." << endl;
-        return false;
+        // Проверка данных
+        if (login == CORRECT_LOGIN && password == CORRECT_PASS) {
+            cout << "\nУспешный вход! Добро пожаловать, " << login << "." << endl;
+            SetTextColor(15);
+            return true;
+        }
+        else {
+            SetTextColor(4);
+            cout << "\nОшибка: Неверный логин или пароль." << endl;
+            cout << "Попробуйте снова..." << endl;
+            SetTextColor(15);
+        }
     }
 }
 
-void AddData()
+void PrintHelp()
 {
-    system("cls");  // Очистка экрана
-    cout << "Добавить автомабиль :\n";
-    // здесь реализуете свой алгоритм
 
-    cout << "Введите ID: ";
-    getline(cin, baza[countCars].id);
-
-    cout << "Введите Марку: ";
-    getline(cin, baza[countCars].marka);
-
-    cout << "Введите Модель: ";
-    getline(cin, baza[countCars].model);
-
-    cout << "Введите Год: ";
-    cin >> baza[countCars].god;
-
-    cin.ignore();
-
-    cout << "Введите Кузов: ";
-    getline(cin, baza[countCars].kuzov);
-
-    cout << "Введите Номер: ";
-    getline(cin, baza[countCars].nomer);
-
-    cout << "Введите Цену: ";
-    cin >> baza[countCars].cena;
-
-    cin.ignore();
-
-    countCars++;
-
-    cout << "\nДобавлено! Нажмите клавишу...";
+    // Выводите текст справки на экран
+    // Рекомендую создать текстовый файл справки
+    // а здесь прочитать текст из него и вывести в консоль
+    system("cls");
+    SetTextColor(15);
+    cout << "========================= Меню =========================\n";
+    SetTextColor(2);
+    cout << "1. Добавить автомобиль.\n";
+    cout << "2. Вывод списка.\n";
+    cout << "3. Поиск по номеру.\n";
+    cout << "4. Поиск по марке.\n";
+    cout << "5. Поиск по модели.\n";
+    cout << "6. Поиск по кузову.\n";
+    SetTextColor(4);
+    cout << "7. Удалить по ID.\n";
+    cout << "8. Выйти.\n";
+    SetTextColor(15);
+    cout << "==========================================================\n";
+    cout << "\nНажмите любую клавишу...";
+    cout << "Справка:\n"; // например выводим только отличников
+    // здесь реализуете свой алгоритм справки
     _getch();
 }
-
 void PrintData()
 {
     system("cls"); // Очистка экрана
@@ -167,6 +160,7 @@ void EditData()
     }
 
     // Если нашли — показываем старые данные
+    SetTextColor(15);
     cout << "\nНайдено! Текущие данные:\n";
     cout << "Марка: " << baza[index].marka << "\n";
     cout << "Модель: " << baza[index].model << "\n";
@@ -287,7 +281,7 @@ void PrintFilteredData()
                 << "Модель: " << baza[i].model << "\n"
                 << "Год: " << baza[i].god << "\n"
                 << "Кузов: " << baza[i].kuzov << "\n"
-                << "Номер: " << baza[i].nomer << "\n"
+                << "Гос Номер: " << baza[i].nomer << "\n"
                 << "Цена: " << baza[i].cena << " руб.\n"
                 << "----------------------------------------\n";
             found = true;
@@ -327,69 +321,31 @@ bool SaveData()
     return true;
 }
 
-// Функция центрирования текста
-std::string CenterText(const std::string& text, size_t width, char filler = ' ')
+void AddData()
 {
-
-    const int LX = 80;
-    const int LY = 60;
-
-
-
-
-
-    //задаем ширину и высоту только после этого у нас будет работать!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-    // Вычисляем отступы
-    size_t totalIndent = width - text.length();
-    size_t leftIndent = totalIndent / 2;           // Левый отступ
-    size_t rightIndent = totalIndent - leftIndent; // Правый отступ 
-
-    // Формируем результирующую строку
-    return std::string(leftIndent, filler) + text + std::string(rightIndent, filler);
-}
-
-int alignment()
-{
-    std::string title = "МЕНЮ";
-
-    std::string option = "Выбрать автомобиль";
-
-    const size_t consoleWidth = 0;
-    std::cout << CenterText(title, consoleWidth, '=') << std::endl;
-    std::cout << CenterText("2. Выход", consoleWidth) << std::endl;
-    std::cout << std::string(consoleWidth, '=') << std::endl;
-    return 0;
-
-}
-
-
-void PrintHelp()
-{
-   
-
-    // Выводите текст справки на экран
-    // Рекомендую создать текстовый файл справки
-    // а здесь прочитать текст из него и вывести в консоль
-    system("cls");
-    cout << "========================= СПРАВКА =========================\n";
-    cout << "1. Добавить автомобиль – введите данные о новом автомобиле.\n";
-    cout << "2. Вывод списка – показывает все машины в табличном виде.\n";
-    cout << "3. Поиск по номеру – находит автомобиль по госномеру/VIN.\n";
-    cout << "4. Поиск по марке – показывает все автомобили указанной марки.\n";
-    cout << "5. Поиск по модели – показывает все автомобили указанной модели.\n";
-    cout << "6. Поиск по кузову – показывает все автомобили с указанным типом кузова.\n";
-    cout << "7. Удалить по ID – удаляет запись по уникальному идентификатору.\n";
-    cout << "8. Выйти – завершает работу и сохраняет данные.\n";
-    cout << "==========================================================\n";
-    cout << "\nНажмите любую клавишу...";
-    cout << "Справка:\n"; // например выводим только отличников
-    // здесь реализуете свой алгоритм справки
+    system("cls");  // Очистка экрана
+    cout << "Добавить автомабиль :\n";
+    // здесь реализуете свой алгоритм
+    cout << "Введите ID: ";
+    getline(cin, baza[countCars].id);
+    cout << "Введите Марку: ";
+    getline(cin, baza[countCars].marka);
+    cout << "Введите Модель: ";
+    getline(cin, baza[countCars].model);
+    cout << "Введите Год: ";
+    cin >> baza[countCars].god;
+    cin.ignore();
+    cout << "Введите Кузов: ";
+    getline(cin, baza[countCars].kuzov);
+    cout << "Введите Номер: ";
+    getline(cin, baza[countCars].nomer);
+    cout << "Введите Цену: ";
+    cin >> baza[countCars].cena;
+    cin.ignore();
+    countCars++;
+    cout << "\nДобавлено! Нажмите клавишу...";
     _getch();
 }
-
 bool LoadData()
 {
     ifstream inFile(fileName);
@@ -434,16 +390,20 @@ char MainMenu()
     while (true) // бесконечный цикл
     {
         system("cls"); // чистим экран
+        SetTextColor(15);
         cout << " УЧЕТ ПОДДЕРЖАННЫХ АВТОМОБИЛЕЙ \n\n"; // выводим название программы, оно у каждого буде свое
         // выводим строки меню, цивра в скобках - клавиша, которую нужно нажать для выбора соответствующего действия
+        SetTextColor(2);
         cout << "[1] Добавить автомобиль" << endl;
         cout << "[2] Вывод списка автомобилей" << endl;
         cout << "[3] Поиск автомобиля по номеру" << endl;
         cout << "[4] Поиск автомобиля по марке" << endl;
         cout << "[5] Поиск автомобиля по модели" << endl;
         cout << "[6] поиск автомобиля по типу кузова" << endl;
+        SetTextColor(4);
         cout << "[7] Удалить автомобиль по номеру" << endl;
         cout << "[8] Выйти из программы\n" << endl;
+        SetTextColor(15);
         cout << "Выш выбор > ";
         char choice = _getch(); // считываем нажатую пользователем клавишу
         if (choice < '1' || choice > '8') // проверяем, соответствует ли клавиша пунктам меню
@@ -494,11 +454,8 @@ void HandleEvents()
             break;
         case '8': // // если 1 то выходим
             return;
-
         }
-
     }
-
 }
 int main()
 {
@@ -511,15 +468,8 @@ int main()
         return 0; // Выход из программs   если пароль неверный
     }
     setlocale(LC_ALL, "");
-    AddData();
     PrintData();
-    if (!LoadData()) // если чтение базы данных неудачно, то продолжение выполнения программы невозможно
-    {       // выводим сообщение об ошибке и выходим с кодом 1
-        cout << "Ошибка чтения базы данных\n";
-        return 1;
-        // как вариант, если базу прочитать невозможно, вы можете создать новую базу данных и продолжить работу
-        // с программой
-    }
+    AddData();
     HandleEvents(); // вызываем функцию обработки нажатий клавиш пользователем
     SaveData(); // при выходе сохраняем данные в базе данных
 }
