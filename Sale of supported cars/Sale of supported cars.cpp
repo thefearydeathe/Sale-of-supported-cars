@@ -5,7 +5,6 @@
 #include <windows.h>
 #include <fstream>
 #include <string>
-#include <iomanip>
 #include "lib.h"
 // #include "students.h"// подключаем свою библиотеку работы со связным списком
                         // список должен хранить данные о вашей предметной области
@@ -26,79 +25,75 @@ using namespace std;
 
 // Массив на 100 машин
 Auto baza[100];
-int countCars = 0;  // сколько машин сейчас в базе
+int countCars = 1;  // сколько машин сейчас в базе
 
 // Имя файла, куда сохроняеться
 string fileName = "autos.txt";
+const int width = 80;
+bool LOGIN_IN()
+{
+    string login, password;
+    string fileLogin, filePass;
 
-bool LOGIN_IN() {
-    string login;
-    string password;
-    const string CORRECT_LOGIN = "Admin";
-    const string CORRECT_PASS = "0000";
+    ifstream passwordFile("password.txt");
+    if (!passwordFile)
+    {
+        SetTextColor(4);
+        cout << "Ошибка: нет файла password.txt!" << endl;
+        SetTextColor(15);
+        _getch();
+        return false;
+    }
 
-    SetTextColor(15);
-    cout << "=== ВХОД В СИСТЕМУ ===" << endl;
-    while (true) {
-        // Ввод логина
+    getline(passwordFile, fileLogin);
+    getline(passwordFile, filePass);
+    passwordFile.close();
+    cout << "========================= ВХОД В СИСТЕМУ =========================" << endl;
+
+    while (true)
+    {
         cout << "\nВведите логин: ";
         getline(cin, login);
 
-        // Ввод пароля
         cout << "Введите пароль: ";
         getline(cin, password);
 
-        // Проверка данных
-        if (login == CORRECT_LOGIN && password == CORRECT_PASS) {
-            cout << "\nУспешный вход! Добро пожаловать, " << login << "." << endl;
+        // Проверяем, что пользователь что-то ввёл
+        if (login.empty() || password.empty())
+        {
+            SetTextColor(4);
+            cout << "\nЛогин и пароль не могут быть пустыми!" << endl;
             SetTextColor(15);
+            continue; // просим ввести заново
+        }
+
+        if (login == fileLogin && password == filePass)
+        {
             return true;
         }
-        else {
+        else
+        {
             SetTextColor(4);
-            cout << "\nОшибка: Неверный логин или пароль." << endl;
-            cout << "Попробуйте снова..." << endl;
+            cout << "\nНеверный логин или пароль!" << endl;
             SetTextColor(15);
+            cout << "Попробуйте ещё раз..." << endl;
         }
     }
 }
 
-void PrintHelp()
-{
-
-    // Выводите текст справки на экран
-    // Рекомендую создать текстовый файл справки
-    // а здесь прочитать текст из него и вывести в консоль
-    system("cls");
-    SetTextColor(15);
-    cout << "========================= Меню =========================\n";
-    SetTextColor(2);
-    cout << "1. Добавить автомобиль.\n";
-    cout << "2. Вывод списка.\n";
-    cout << "3. Поиск по номеру.\n";
-    cout << "4. Поиск по марке.\n";
-    cout << "5. Поиск по модели.\n";
-    cout << "6. Поиск по кузову.\n";
-    SetTextColor(4);
-    cout << "7. Удалить по ID.\n";
-    cout << "8. Выйти.\n";
-    SetTextColor(15);
-    cout << "==========================================================\n";
-    cout << "\nНажмите любую клавишу...";
-    cout << "Справка:\n"; // например выводим только отличников
-    // здесь реализуете свой алгоритм справки
-    _getch();
-}
 void PrintData()
 {
     system("cls");
     cout << "Список автомобилей:\n\n";
 
-    if (countCars == 0) {
+    if (countCars == 0)
+    {
         cout << "База пуста. Добавьте автомобили!\n";
     }
-    else {
-        for (int i = 0; i < countCars; i++) {
+    else
+    {
+        for (int i = 0; i < countCars; i++)
+        {
             cout << "--- Автомобиль №" << (i + 1) << " ---\n";
             cout << "ID:     " << baza[i].id << "\n";
             cout << "Марка:  " << baza[i].marka << "\n";
@@ -122,7 +117,8 @@ void EditData()
     cout << "Редактирование данных:\n\n";
 
     // Проверка
-    if (countCars == 0) {
+    if (countCars == 0)
+    {
         cout << "База пуста! Нечего редактировать.\n";
         cout << "Нажмите любую клавишу...";
         _getch();
@@ -137,15 +133,18 @@ void EditData()
     // 8. Ищем автомобиль с таким ID в массиве
     int index = -1;                         // Переменная для номера найденной машины (-1 = не найдено)
 
-    for (int i = 0; i < countCars; i++) {   // Перебираем все заполненные ячейки
-        if (baza[i].id == searchId) {       // Если нашли совпадение по ID
+    for (int i = 0; i < countCars; i++)
+    {   // Перебираем все заполненные ячейки
+        if (baza[i].id == searchId)
+        {       // Если нашли совпадение по ID
             index = i;                      // Запоминаем номер ячейки
             break;                          // Выходим из цикла (дальше искать не надо)
         }
     }
 
     // Проверяем: нашли или нет?
-    if (index == -1) {                      // Если index не изменился — не нашли
+    if (index == -1)
+    {                      // Если index не изменился — не нашли
         cout << "\nАвтомобиль с ID '" << searchId << "' не найден!\n";
         cout << "Нажмите любую клавишу...";
         _getch();
@@ -168,7 +167,8 @@ void EditData()
     cout << "Новая марка [" << baza[index].marka << "]: ";
     string temp;                            // Временная переменная для ввода
     std::getline(std::cin, temp);           // Читаем ввод
-    if (!temp.empty()) {                    // Если пользователь что-то ввёл
+    if (!temp.empty())
+    {                    // Если пользователь что-то ввёл
         baza[index].marka = temp;           // Заменяем старое значение на новое
     }
 
@@ -178,7 +178,8 @@ void EditData()
 
     cout << "Новый год [" << baza[index].god << "]: ";
     std::getline(std::cin, temp);
-    if (!temp.empty()) {
+    if (!temp.empty())
+    {
         baza[index].god = stoi(temp);       // stoi() — строку в число (string to int)
     }
 
@@ -192,7 +193,8 @@ void EditData()
 
     cout << "Новая цена [" << baza[index].cena << "]: ";
     std::getline(std::cin, temp);
-    if (!temp.empty()) {
+    if (!temp.empty())
+    {
         baza[index].cena = stoi(temp);      // Преобразуем строку в число
     }
 
@@ -207,7 +209,8 @@ void DeleteData()
     system("cls");
     cout << "Введите ID удаляемого автомобиля:\n";
 
-    if (countCars == 0) {
+    if (countCars == 0)
+    {
         cout << "База пуста! Нечего удалять.\n";
         cout << "Нажмите любую клавишу...";
         _getch();
@@ -219,14 +222,17 @@ void DeleteData()
     getline(cin, delId);
 
     int index = -1;
-    for (int i = 0; i < countCars; i++) {
-        if (baza[i].id == delId) {
+    for (int i = 0; i < countCars; i++)
+    {
+        if (baza[i].id == delId)
+        {
             index = i;
             break;
         }
     }
 
-    if (index == -1) {
+    if (index == -1)
+    {
         cout << "\nАвтомобиль с ID '" << delId << "' не найден!\n";
         cout << "Нажмите любую клавишу...";
         _getch();
@@ -234,7 +240,8 @@ void DeleteData()
     }
 
     // Сдвигаем элементы влево
-    for (int i = index; i < countCars - 1; i++) {
+    for (int i = index; i < countCars - 1; i++)
+    {
         baza[i] = baza[i + 1];
     }
     countCars--;
@@ -249,7 +256,8 @@ void PrintFilteredData()
     system("cls");
     cout << "Автомобили дороже среднего:\n\n";
 
-    if (countCars == 0) {
+    if (countCars == 0)
+    {
         cout << "База пуста!\n";
         cout << "Нажмите любую клавишу...";
         _getch();
@@ -258,7 +266,8 @@ void PrintFilteredData()
 
     // Считаем среднюю цену
     double sum = 0;
-    for (int i = 0; i < countCars; i++) {
+    for (int i = 0; i < countCars; i++)
+    {
         sum += baza[i].cena;
     }
     double avg = sum / countCars;
@@ -267,8 +276,10 @@ void PrintFilteredData()
     cout << "----------------------------------------\n";
 
     bool found = false;
-    for (int i = 0; i < countCars; i++) {
-        if (baza[i].cena > avg) {
+    for (int i = 0; i < countCars; i++)
+    {
+        if (baza[i].cena > avg)
+        {
             cout << "ID: " << baza[i].id << "\n"
                 << "Марка: " << baza[i].marka << "\n"
                 << "Модель: " << baza[i].model << "\n"
@@ -281,7 +292,8 @@ void PrintFilteredData()
         }
     }
 
-    if (!found) {
+    if (!found)
+    {
         cout << "Нет автомобилей дороже среднего.\n";
     }
 
@@ -291,15 +303,17 @@ void PrintFilteredData()
 
 bool SaveData()
 {
-    ofstream outFile(fileName);
-    if (!outFile.is_open()) {
+    ofstream outFile("autos.txt");
+    if (!outFile.is_open())
+    {
         cout << "Ошибка: не удалось открыть файл для записи!\n";
         return false;
     }
 
     outFile << countCars << endl;
 
-    for (int i = 0; i < countCars; i++) {
+    for (int i = 0; i < countCars; i++)
+    {
         outFile << baza[i].id << endl;
         outFile << baza[i].marka << endl;
         outFile << baza[i].model << endl;
@@ -317,10 +331,10 @@ bool SaveData()
 void AddData()
 {
     system("cls");  // Очистка экрана
-    cout << "Добавить автомабиль :\n";
+    cout << "========================= Добавить автомабиль========================= :\n";
     // здесь реализуете свой алгоритм
     cout << "Введите ID: ";
-    getline(cin, baza[countCars].id);
+        getline(cin, baza[countCars].id);
     cout << "Введите Марку: ";
     getline(cin, baza[countCars].marka);
     cout << "Введите Модель: ";
@@ -341,22 +355,25 @@ void AddData()
 }
 bool LoadData()
 {
-    ifstream inFile(fileName);
-    if (!inFile.is_open()) {
+    ifstream inFile("autos.txt");
+    if (!inFile.is_open())
+    {
         cout << "Файл базы данных не найден. Будет создана новая база.\n";
         return false;
     }
 
     int loadedCount;
     inFile >> loadedCount;
-    if (loadedCount > 100) {
+    if (loadedCount > 100)
+    {
         cout << "Ошибка: в файле больше записей, чем может вместить программа.\n";
         inFile.close();
         return false;
     }
 
     countCars = 0;
-    for (int i = 0; i < loadedCount; i++) {
+    for (int i = 0; i < loadedCount; i++)
+    {
         string temp;
         getline(inFile, temp); // скипаем перевод строки после числа
 
@@ -369,7 +386,6 @@ bool LoadData()
         if (!getline(inFile, baza[i].nomer)) break;
         if (!(inFile >> baza[i].cena)) break;
         inFile.ignore();
-
         countCars++;
     }
 
@@ -386,16 +402,18 @@ char MainMenu()
         SetTextColor(15);
         cout << " УЧЕТ ПОДДЕРЖАННЫХ АВТОМОБИЛЕЙ \n\n"; // выводим название программы, оно у каждого буде свое
         // выводим строки меню, цивра в скобках - клавиша, которую нужно нажать для выбора соответствующего действия
+        cout << "Привет " << endl;
         SetTextColor(2);
         cout << "[1] Добавить автомобиль" << endl;
         cout << "[2] Вывод списка автомобилей" << endl;
-        cout << "[3] Поиск автомобиля по номеру" << endl;
+        cout << "[3] Поиск автомобиля по гос.номеру" << endl;
         cout << "[4] Поиск автомобиля по марке" << endl;
         cout << "[5] Поиск автомобиля по модели" << endl;
         cout << "[6] поиск автомобиля по типу кузова" << endl;
+        cout << "[7] удалить автомобиль по номеру" << endl;
+        cout << "[8] сохранение" << endl;
         SetTextColor(4);
-        cout << "[7] Удалить автомобиль по номеру" << endl;
-        cout << "[8] Выйти из программы\n" << endl;
+        cout << "[9] Выйти из программы\n" << endl;
         SetTextColor(15);
         cout << "Выш выбор > ";
         char choice = _getch(); // считываем нажатую пользователем клавишу
@@ -416,8 +434,8 @@ char MainMenu()
 // обработка действий пользователя
 void HandleEvents()
 {
-    char choice = 0;
-    while (choice != '8') // цикл пока пользователь не нажал ВЫХОД
+    char choice = 9;
+    while (choice != '0') // цикл пока пользователь не нажал ВЫХОД
     {
         choice = MainMenu(); // определяем, какой пункт меню выбрал пользователь
         // переменная choice будет хранить символ, соответствующий
@@ -434,7 +452,6 @@ void HandleEvents()
             EditData();
             break;
         case '4': // если 4 то вызываем функцию удаления данных
-            DeleteData();
             break;
         case '5': // если 5 то вызываем функцию вывода данных по критерию отбора
             PrintFilteredData();
@@ -442,17 +459,21 @@ void HandleEvents()
         case '6': // если 6 то вызываем функцию сохранения данных
             SaveData();
             break;
-        case '7': // если 7 то вызываем функцию вывода справочной информации по пользованию программой
-            PrintHelp();
+        case '7': // если 7 то вызываем функцию удаления данных
+            DeleteData();
             break;
-        case '8': // // если 1 то выходим
+        case '8': // если 8 то вызываем функцию сохранения данных
+            SaveData();
+            break;
+        case '9': // если 9 то выходим
             return;
         }
     }
 }
+
 int main()
 {
-    SetConsoleOutputCP(1251); // Установка кодировки для Windows
+    setlocale(LC_ALL, "Russian"); // Установка кодировки для Windows
 
     // Сначала проверяем вход
     if (!LOGIN_IN()) {
@@ -465,4 +486,14 @@ int main()
     AddData();
     HandleEvents(); // вызываем функцию обработки нажатий клавиш пользователем
     SaveData(); // при выходе сохраняем данные в базе данных
+// Загрузка данных
+if (!LoadData())
+{
+    cout << "\n\tОшибка загрузки базы данных.\n";
+    _getch();
+    return 1;
 }
+// Сохранение при выходе
+SaveData();
+}
+
