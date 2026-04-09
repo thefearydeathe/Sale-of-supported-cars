@@ -30,3 +30,17 @@ inline void SetTextColor(int color, int background = crt::COLOR_BLACK)
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // 
     SetConsoleTextAttribute(hConsole, color | (background << 4)); // 
 }
+
+struct Auto
+{
+    string VIN;          // Уникальный номер
+    string marka;        // марка
+    string model;        // модель
+    string god;             // год выпуска
+    string kuzov;        // Тип кузова
+    string color;       // Цвет кузова
+    string driveType;    // Тип привода 
+    string cena;            // цена в рублях
+
+    Auto* next;
+};
