@@ -44,13 +44,13 @@ bool LOGIN_IN()
         cout << "Введите пароль: ";
         getline(cin, password);
 
-        // Проверяем, что пользователь что-то ввёл
+        // Проверка
         if (login.empty() || password.empty())
         {
             SetTextColor(4);
             cout << "\nЛогин и пароль не могут быть пустыми!" << endl;
             SetTextColor(15);
-            continue; // просим ввести заново
+            continue;
         }
 
         if (login == fileLogin && password == filePass)
@@ -102,7 +102,6 @@ void SaveData()
 {
     ofstream file("autos.txt");
 
-    // Считаем количество
     int count = 0;
     Auto* t = head;
     while (t != nullptr) {
@@ -111,7 +110,6 @@ void SaveData()
     }
     file << count << endl;
 
-    // Пишем все поля
     t = head;
     while (t != nullptr) {
         file << t->VIN << endl;
@@ -121,7 +119,7 @@ void SaveData()
         file << t->kuzov << endl;
         file << t->color << endl;
         file << t->driveType << endl;
-        file << t->cena << endl;  // цена как текст
+        file << t->cena << endl;
         t = t->next;
     }
     file.close();
@@ -142,7 +140,7 @@ void AddData()
     cout << "Введите модель (до 25 символов): ";
     getline(cin, newAuto->model);
     cout << "Введите год выпуска: ";
-    getline(cin, newAuto->god);  // <-- ТЕПЕРЬ СТРОКА
+    getline(cin, newAuto->god);
     cout << "Введите тип кузова (до 15 символов): ";
     getline(cin, newAuto->kuzov);
     cout << "Введите цвет кузова (до 12 символов): ";
@@ -150,7 +148,7 @@ void AddData()
     cout << "Введите тип привода (до 10 символов): ";
     getline(cin, newAuto->driveType);
     cout << "Введите цену в рублях: ";
-    getline(cin, newAuto->cena);  // <-- ТЕПЕРЬ СТРОКА
+    getline(cin, newAuto->cena);
     // Добавление в конец связного списка
     if (head == nullptr) {
         head = newAuto;
@@ -189,7 +187,7 @@ void EditData() {
     Auto* temp = head;
     while (temp != nullptr) {
         if (temp->VIN == searchVin) {
-            break;  // Нашли
+            break; 
         }
         temp = temp->next;
     }
@@ -224,7 +222,7 @@ void EditData() {
     if (!input.empty()) temp->model = input;
     cout << "Год выпуска [" << temp->god << "]: ";
     getline(cin, input);
-    if (!input.empty()) temp->god = input;  // <-- Просто строка
+    if (!input.empty()) temp->god = input;
     cout << "Тип кузова [" << temp->kuzov << "]: ";
     getline(cin, input);
     if (!input.empty()) temp->kuzov = input;
@@ -236,7 +234,7 @@ void EditData() {
     if (!input.empty()) temp->driveType = input;
     cout << "Цена [" << temp->cena << "]: ";
     getline(cin, input);
-    if (!input.empty()) temp->cena = input;  // <-- Просто строка
+    if (!input.empty()) temp->cena = input;
     SetTextColor(2);
     cout << "\nДанные успешно обновлены!\n";
     SetTextColor(15);
@@ -338,7 +336,7 @@ void SearchByBrand() {
     _getch();
 }
 
-// Поиск по модели (частичное совпадение, без учёта регистра)
+// Поиск по модели (без учёта регистра)
 void SearchByModel()
 {
     system("cls");
@@ -396,7 +394,7 @@ void SearchByModel()
     _getch();
 }
 
-// Поиск по году выпуска (точное совпадение)
+// Поиск по году выпуска
 void SearchByYear() {
     system("cls");
     SetTextColor(15);
@@ -406,13 +404,13 @@ void SearchByYear() {
         _getch();
         return;
     }
-    string searchYear;  // <-- ТЕПЕРЬ СТРОКА
+    string searchYear;
     cout << "Введите год выпуска: ";
-    getline(cin, searchYear);  // <-- Читаем через getlin
+    getline(cin, searchYear); 
     Auto* temp = head;
     int foundCount = 0;
     while (temp != nullptr) {
-        if (temp->god == searchYear) {  // <-- Сравниваем строки
+        if (temp->god == searchYear) {
             foundCount++;
             cout << "\n--- Автомобиль №" << foundCount << " ---\n";
             cout << "VIN:" << temp->VIN << endl;
@@ -434,7 +432,7 @@ void SearchByYear() {
     _getch();
 }
 
-// Поиск по типу кузова (точное совпадение)
+// Поиск по типу кузова
 void SearchByBodyType()
 {
     system("cls");
@@ -453,7 +451,7 @@ void SearchByBodyType()
 
     // Если пользователь ничего не ввёл — отменяем поиск
     if (searchType.empty()) {
-        cout << "\nПоиск отменён.\n";// пустой запрос
+        cout << "\nПоиск отменён.\n";     // пустой запрос
         cout << "\nНажмите любую клавишу...";
         _getch();
         return;
@@ -533,7 +531,7 @@ void SearchByColor() {
     cout << "\nНажмите любую клавишу...";
     _getch();
 }
-// Поиск по типу привода (частичное совпадение, без учёта регистра)
+// Поиск по типу привода (без учёта регистра)
 void SearchByDriveType() {
     system("cls");
     SetTextColor(15);
@@ -582,7 +580,7 @@ void SearchByDriveType() {
     _getch();
 }
 
-// Поиск по цене (точное совпадение)
+// Поиск по цене
 void SearchByPrice() {
     system("cls");
     SetTextColor(15);
@@ -592,13 +590,13 @@ void SearchByPrice() {
         _getch();
         return;
     }
-    string searchPrice;  // <-- ТЕПЕРЬ СТРОКА
+    string searchPrice;
     cout << "Введите цену в рублях: ";
-    getline(cin, searchPrice);  // <-- Читаем через getline
+    getline(cin, searchPrice);  // Чтение через getline
     Auto* temp = head;
     int foundCount = 0;
     while (temp != nullptr) {
-        if (temp->cena == searchPrice) {  // <-- Сравниваем строки
+        if (temp->cena == searchPrice) {  // Сравниваем строки
             foundCount++;
             cout << "\n--- Автомобиль №" << foundCount << " ---\n";
             cout << "VIN:" << temp->VIN << endl;
@@ -626,7 +624,7 @@ void DeleteByVin() {
     SetTextColor(15);
     cout << "=== УДАЛЕНИЕ АВТОМОБИЛЯ ПО НОМЕРУ ===\n\n";
 
-    // Проверяем, есть ли вообще машины в базе
+    // Проверка
     if (head == nullptr) {
         cout << "База данных пуста.\n";
         cout << "Нажмите любую клавишу...";
@@ -748,7 +746,7 @@ void LoadData()
     string line;
     getline(file, line);           // читаем количество как строку
     int count = 0;
-    for (char c : line) {          // простой перевод строки в число (вручную)
+    for (char c : line) {          // простой перевод строки в число
         if (c >= '0' && c <= '9')
             count = count * 10 + (c - '0');
     }
@@ -757,7 +755,6 @@ void LoadData()
     {
         Auto* car = new Auto;
 
-        // Читаем ВСЕ поля через getline — одинаково и просто
         getline(file, car->VIN);
         getline(file, car->marka);
         getline(file, car->model);
@@ -774,7 +771,7 @@ void LoadData()
     file.close();
     cout << "Загружено " << count << " авто.\n";
 }
-// вывод в консоль меню программы
+
 // Главное меню (выводит пункты и возвращает нажатую клавишу)
 char MainMenu() {
     while (true) {
@@ -806,7 +803,7 @@ char MainMenu() {
         cin.ignore(); // Очистка буфера после ввода числа
 
         if (choice >= 1 && choice <= 13) {
-            return choice;   // Возвращаем ЧИСЛО, а не символ
+            return choice;   // Возвращаем число
         }
         else {
             cout << "Такого варианта не существует! Нажмите любую клавишу...";
