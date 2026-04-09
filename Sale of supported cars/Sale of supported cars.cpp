@@ -11,13 +11,17 @@
                         // и реализовывать функции, согласно вашему заданию
 struct Auto
 {
-    string id;           // номер в базе 
+    string VIN;          // Уникальный номер
     string marka;        // марка
     string model;        // модель
     int god;             // год выпуска
-    string kuzov;        // седан, джип и т.д.
-    string nomer;        // гос. номер или VIN
+    string kuzov;        // Тип кузова
+    string color;       // Цвет кузова
+    string driveType;    // Тип привода 
     int cena;            // цена в рублях
+
+
+    Auto* next;
 };
 
 using namespace std;
@@ -28,6 +32,7 @@ Auto baza[100];
 int countCars = 1;  // сколько машин сейчас в базе
 
 // Имя файла, куда сохроняеться
+Auto* head = nullptr;
 string fileName = "autos.txt";
 const int width = 80;
 bool LOGIN_IN()
@@ -81,183 +86,556 @@ bool LOGIN_IN()
     }
 }
 
-void PrintData()
-{
+void PrintData() {
     system("cls");
-    cout << "Список автомобилей:\n\n";
+    SetTextColor(15);
+    cout << "=== СПИСОК АВТОМОБИЛЕЙ ===\n\n";
 
-    if (countCars == 0)
-    {
-        cout << "База пуста. Добавьте автомобили!\n";
+    if (head == nullptr) {
+        cout << "База данных пуста.\n";
     }
-    else
-    {
-        for (int i = 0; i < countCars; i++)
-        {
-            cout << "--- Автомобиль №" << (i + 1) << " ---\n";
-            cout << "ID:     " << baza[i].id << "\n";
-            cout << "Марка:  " << baza[i].marka << "\n";
-            cout << "Модель: " << baza[i].model << "\n";
-            cout << "Год:    " << baza[i].god << "\n";
-            cout << "Кузов:  " << baza[i].kuzov << "\n";
-            cout << "Номер:  " << baza[i].nomer << "\n";
-            cout << "Цена:   " << baza[i].cena << " руб.\n";
+    else {
+        Auto* temp = head;
+        int count = 0;
+        while (temp != nullptr) {
+            count++;
+            cout << "--- Автомобиль №" << count << " ---\n";
+            cout << "VIN:" << temp->VIN << "\n";
+            cout << "Марка:" << temp->marka << "\n";
+            cout << "Модель:" << temp->model << "\n";
+            cout << "Год выпуска:" << temp->god << "\n";
+            cout << "Тип кузова:" << temp->kuzov << "\n";
+            cout << "Цвет кузова:" << temp->color << "\n";
+            cout << "Тип привода:" << temp->driveType << "\n";
+            cout << "Цена:" << temp->cena << " руб.\n";
             cout << "--------------------------\n\n";
+            temp = temp->next;
         }
-        cout << "Всего автомобилей: " << countCars << "\n";
+        cout << "Всего автомобилей: " << count << "\n";
     }
 
     cout << "\nНажмите любую клавишу...";
     _getch();
 }
 
-void EditData()
-{
+// Редактирование данных автомобиля по VIN
+void EditData() {
     system("cls");
-    cout << "Редактирование данных:\n\n";
-
-    // Проверка
-    if (countCars == 0)
-    {
-        cout << "База пуста! Нечего редактировать.\n";
-        cout << "Нажмите любую клавишу...";
-        _getch();
-        return; // Выходит из функции 
-    }
-
-    // Просим ввести ID автомобиля, который хотим изменить
-    cout << "Введите ID автомобиля для редактирования: ";
-    string searchId;                        // Переменная для поиска
-    std::getline(std::cin, searchId);       // Читаем строку (std:: обязательно!)
-
-    // 8. Ищем автомобиль с таким ID в массиве
-    int index = -1;                         // Переменная для номера найденной машины (-1 = не найдено)
-
-    for (int i = 0; i < countCars; i++)
-    {   // Перебираем все заполненные ячейки
-        if (baza[i].id == searchId)
-        {       // Если нашли совпадение по ID
-            index = i;                      // Запоминаем номер ячейки
-            break;                          // Выходим из цикла (дальше искать не надо)
-        }
-    }
-
-    // Проверяем: нашли или нет?
-    if (index == -1)
-    {                      // Если index не изменился — не нашли
-        cout << "\nАвтомобиль с ID '" << searchId << "' не найден!\n";
-        cout << "Нажмите любую клавишу...";
-        _getch();
-        return;                             // Выходим, ничего не меняли
-    }
-
-    // Если нашли — показываем старые данные
     SetTextColor(15);
-    cout << "\nНайдено! Текущие данные:\n";
-    cout << "Марка: " << baza[index].marka << "\n";
-    cout << "Модель: " << baza[index].model << "\n";
-    cout << "Год: " << baza[index].god << "\n";
-    cout << "Кузов: " << baza[index].kuzov << "\n";
-    cout << "Номер: " << baza[index].nomer << "\n";
-    cout << "Цена: " << baza[index].cena << " руб.\n";
+    cout << "=== РЕДАКТИРОВАНИЕ АВТОМОБИЛЯ ===\n\n";
 
-    // Теперь вводим новые значения
-    cout << "\nВведите новые данные (оставьте пустым, чтобы не менять):\n";
-
-    cout << "Новая марка [" << baza[index].marka << "]: ";
-    string temp;                            // Временная переменная для ввода
-    std::getline(std::cin, temp);           // Читаем ввод
-    if (!temp.empty())
-    {                    // Если пользователь что-то ввёл
-        baza[index].marka = temp;           // Заменяем старое значение на новое
-    }
-
-    cout << "Новая модель [" << baza[index].model << "]: ";
-    std::getline(std::cin, temp);
-    if (!temp.empty()) baza[index].model = temp;
-
-    cout << "Новый год [" << baza[index].god << "]: ";
-    std::getline(std::cin, temp);
-    if (!temp.empty())
-    {
-        baza[index].god = stoi(temp);       // stoi() — строку в число (string to int)
-    }
-
-    cout << "Новый кузов [" << baza[index].kuzov << "]: ";
-    std::getline(std::cin, temp);
-    if (!temp.empty()) baza[index].kuzov = temp;
-
-    cout << "Новый номер [" << baza[index].nomer << "]: ";
-    std::getline(std::cin, temp);
-    if (!temp.empty()) baza[index].nomer = temp;
-
-    cout << "Новая цена [" << baza[index].cena << "]: ";
-    std::getline(std::cin, temp);
-    if (!temp.empty())
-    {
-        baza[index].cena = stoi(temp);      // Преобразуем строку в число
-    }
-
-    // Сообщение об успехе
-    cout << "\n Данные обновлены!\n";
-    cout << "Нажмите любую клавишу...";
-    _getch();
-}
-
-void DeleteData()
-{
-    system("cls");
-    cout << "Введите ID удаляемого автомобиля:\n";
-
-    if (countCars == 0)
-    {
-        cout << "База пуста! Нечего удалять.\n";
-        cout << "Нажмите любую клавишу...";
+    if (head == nullptr) {
+        cout << "База данных пуста.\nНажмите любую клавишу...";
         _getch();
         return;
     }
 
-    string delId;
-    cout << "ID: ";
-    getline(cin, delId);
+    string searchVin;
+    cout << "Введите VIN автомобиля для редактирования: ";
+    getline(cin, searchVin);
 
-    int index = -1;
-    for (int i = 0; i < countCars; i++)
-    {
-        if (baza[i].id == delId)
-        {
-            index = i;
+    // Ищем автомобиль с таким VIN в списке
+    Auto* temp = head;
+    while (temp != nullptr) {
+        if (temp->VIN == searchVin) {
+            break;  // Нашли
+        }
+        temp = temp->next;
+    }
+
+    if (temp == nullptr) {
+        cout << "\nАвтомобиль с VIN \"" << searchVin << "\" не найден.\n";
+        cout << "\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    // Показываем текущие данные
+    cout << "\n--- Текущие данные ---\n";
+    cout << "Марка:" << temp->marka << endl;
+    cout << "Модель:" << temp->model << endl;
+    cout << "Год выпуска:" << temp->god << endl;
+    cout << "Тип кузова:" << temp->kuzov << endl;
+    cout << "Цвет кузова:" << temp->color << endl;
+    cout << "Тип привода:" << temp->driveType << endl;
+    cout << "Цена:" << temp->cena << " руб." << endl;
+
+    // Ввод новых значений (Enter оставляет старое)
+    cout << "\n--- Введите новые значения (Enter - оставить без изменений) ---\n";
+
+    string input;
+
+    cout << "Марка [" << temp->marka << "]: ";
+    getline(cin, input);
+    if (!input.empty()) temp->marka = input;
+
+    cout << "Модель [" << temp->model << "]: ";
+    getline(cin, input);
+    if (!input.empty()) temp->model = input;
+
+    cout << "Год выпуска [" << temp->god << "]: ";
+    getline(cin, input);
+    if (!input.empty()) temp->god = stoi(input);
+
+    cout << "Тип кузова [" << temp->kuzov << "]: ";
+    getline(cin, input);
+    if (!input.empty()) temp->kuzov = input;
+
+    cout << "Цвет кузова [" << temp->color << "]: ";
+    getline(cin, input);
+    if (!input.empty()) temp->color = input;
+
+    cout << "Тип привода [" << temp->driveType << "]: ";
+    getline(cin, input);
+    if (!input.empty()) temp->driveType = input;
+
+    cout << "Цена [" << temp->cena << "]: ";
+    getline(cin, input);
+    if (!input.empty()) temp->cena = stoi(input);
+
+    SetTextColor(2);
+    cout << "\nДанные успешно обновлены!\n";
+    SetTextColor(15);
+    cout << "\nНажмите любую клавишу...";
+    _getch();
+}
+
+
+// Поиск по номеру (VIN)
+void SearchByVin() {
+    system("cls");
+    SetTextColor(15);
+    cout << "=== ПОИСК ПО НОМЕРУ (VIN) ===\n\n";
+
+    if (head == nullptr) {
+        cout << "База данных пуста.\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    string searchVin;
+    cout << "Введите VIN для поиска: ";
+    getline(cin, searchVin);
+
+    Auto* temp = head;
+    bool found = false;
+    while (temp != nullptr) {
+        if (temp->VIN == searchVin) {
+            cout << "\n--- Найден автомобиль ---\n";
+            cout << "VIN:" << temp->VIN << endl;
+            cout << "Марка:" << temp->marka << endl;
+            cout << "Модель:" << temp->model << endl;
+            cout << "Год выпуска:" << temp->god << endl;
+            cout << "Тип кузова:" << temp->kuzov << endl;
+            cout << "Цвет кузова:" << temp->color << endl;
+            cout << "Тип привода:" << temp->driveType << endl;
+            cout << "Цена:" << temp->cena << " руб." << endl;
+            found = true;
             break;
         }
+        temp = temp->next;
     }
 
-    if (index == -1)
-    {
-        cout << "\nАвтомобиль с ID '" << delId << "' не найден!\n";
+    if (!found) {
+        cout << "\nАвтомобиль с VIN \"" << searchVin << "\" не найден.\n";
+    }
+
+    cout << "\nНажмите любую клавишу...";
+    _getch();
+}
+
+// Поиск по марке (частичное совпадение, без учёта регистра)
+void SearchByBrand() {
+    system("cls");
+    SetTextColor(15);
+    cout << "=== ПОИСК ПО МАРКЕ ===\n\n";
+
+    if (head == nullptr) {
+        cout << "База данных пуста.\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    string searchBrand;
+    cout << "Введите марку (или её часть): ";
+    getline(cin, searchBrand);
+
+    string lowerSearch = searchBrand;
+    for (char& c : lowerSearch) c = tolower(c);
+
+    Auto* temp = head;
+    int foundCount = 0;
+    while (temp != nullptr) {
+        string lowerBrand = temp->marka;
+        for (char& c : lowerBrand) c = tolower(c);
+
+        if (lowerBrand.find(lowerSearch) != string::npos) {
+            foundCount++;
+            cout << "\n--- Автомобиль №" << foundCount << " ---\n";
+            cout << "VIN:" << temp->VIN << endl;
+            cout << "Марка:" << temp->marka << endl;
+            cout << "Модель:" << temp->model << endl;
+            cout << "Год выпуска:" << temp->god << endl;
+            cout << "Тип кузова:" << temp->kuzov << endl;
+            cout << "Цвет кузова:" << temp->color << endl;
+            cout << "Тип привода:" << temp->driveType << endl;
+            cout << "Цена:" << temp->cena << " руб." << endl;
+        }
+        temp = temp->next;
+    }
+
+    if (foundCount == 0)
+        cout << "\nАвтомобилей марки \"" << searchBrand << "\" не найдено.\n";
+    else
+        cout << "\nВсего найдено: " << foundCount << "\n";
+
+    cout << "\nНажмите любую клавишу...";
+    _getch();
+}
+
+// Поиск по модели (частичное совпадение, без учёта регистра)
+void SearchByModel()
+{
+    system("cls");
+    SetTextColor(15);
+    cout << "=== ПОИСК ПО МОДЕЛИ ===\n\n";
+
+    if (head == nullptr) {
+        cout << "База данных пуста.\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    string searchModel;
+    cout << "Введите модель (или её часть): ";
+    getline(cin, searchModel);
+
+    // Если пользователь ничего не ввёл — отменяем поиск
+    if (searchModel.empty()) {
+        cout << "\nПоиск отменён (пустой запрос).\n";
+        cout << "\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    string lowerSearch = searchModel;
+    for (char& c : lowerSearch) c = tolower(c);
+
+    Auto* temp = head;
+    int foundCount = 0;
+    while (temp != nullptr) {
+        string lowerModel = temp->model;
+        for (char& c : lowerModel) c = tolower(c);
+
+        if (lowerModel.find(lowerSearch) != string::npos) {
+            foundCount++;
+            cout << "\n--- Автомобиль №" << foundCount << " ---\n";
+            cout << "VIN:" << temp->VIN << endl;
+            cout << "Марка:" << temp->marka << endl;
+            cout << "Модель:" << temp->model << endl;
+            cout << "Год выпуска:" << temp->god << endl;
+            cout << "Тип кузова:" << temp->kuzov << endl;
+            cout << "Цвет кузова:" << temp->color << endl;
+            cout << "Тип привода:" << temp->driveType << endl;
+            cout << "Цена:" << temp->cena << " руб." << endl;
+        }
+        temp = temp->next;
+    }
+
+    if (foundCount == 0)
+        cout << "\nАвтомобилей модели \"" << searchModel << "\" не найдено.\n";
+    else
+        cout << "\nВсего найдено: " << foundCount << "\n";
+
+    cout << "\nНажмите любую клавишу...";
+    _getch();
+}
+
+// Поиск по году выпуска (точное совпадение)
+void SearchByYear() {
+    system("cls");
+    SetTextColor(15);
+    cout << "=== ПОИСК ПО ГОДУ ВЫПУСКА ===\n\n";
+
+    if (head == nullptr) {
+        cout << "База данных пуста.\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    int searchYear;
+    cout << "Введите год выпуска: ";
+    cin >> searchYear;
+    cin.ignore();
+
+    Auto* temp = head;
+    int foundCount = 0;
+    while (temp != nullptr) {
+        if (temp->god == searchYear) {
+            foundCount++;
+            cout << "\n--- Автомобиль №" << foundCount << " ---\n";
+            cout << "VIN:" << temp->VIN << endl;
+            cout << "Марка:" << temp->marka << endl;
+            cout << "Модель:" << temp->model << endl;
+            cout << "Год выпуска:" << temp->god << endl;
+            cout << "Тип кузова:" << temp->kuzov << endl;
+            cout << "Цвет кузова:" << temp->color << endl;
+            cout << "Тип привода:" << temp->driveType << endl;
+            cout << "Цена:" << temp->cena << " руб." << endl;
+        }
+        temp = temp->next;
+    }
+
+    if (foundCount == 0)
+        cout << "\nАвтомобилей " << searchYear << " года выпуска не найдено.\n";
+    else
+        cout << "\nВсего найдено: " << foundCount << "\n";
+
+    cout << "\nНажмите любую клавишу...";
+    _getch();
+}
+
+// Поиск по типу кузова (точное совпадение)
+void SearchByBodyType()
+{
+    system("cls");
+    SetTextColor(15);
+    cout << "=== ПОИСК ПО ТИПУ КУЗОВА ===\n\n";
+
+    if (head == nullptr) {
+        cout << "База данных пуста.\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    string searchType;
+    cout << "Введите тип кузова: ";
+    getline(cin, searchType);
+
+    Auto* temp = head;
+    int foundCount = 0;
+    while (temp != nullptr) {
+        if (temp->kuzov == searchType) {
+            foundCount++;
+            cout << "\n--- Автомобиль №" << foundCount << " ---\n";
+            cout << "VIN: " << temp->VIN << "\nМарка: " << temp->marka
+                << "\nМодель: " << temp->model << "\nГод: " << temp->god
+                << "\nКузов: " << temp->kuzov << "\nЦвет: " << temp->color
+                << "\nПривод: " << temp->driveType << "\nЦена: " << temp->cena << " руб.\n";
+        }
+        temp = temp->next;
+    }
+
+    if (foundCount == 0)
+        cout << "\nАвтомобилей с типом кузова \"" << searchType << "\" не найдено.\n";
+    else
+        cout << "\nВсего найдено: " << foundCount << "\n";
+
+    cout << "\nНажмите любую клавишу...";
+    _getch();
+}
+
+// Поиск по цвету кузова (частичное совпадение, без учёта регистра)
+void SearchByColor() {
+    system("cls");
+    SetTextColor(15);
+    cout << "=== ПОИСК ПО ЦВЕТУ КУЗОВА ===\n\n";
+
+    if (head == nullptr) {
+        cout << "База данных пуста.\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    string searchColor;
+    cout << "Введите цвет (или его часть): ";
+    getline(cin, searchColor);
+
+    string lowerSearch = searchColor;
+    for (char& c : lowerSearch) c = tolower(c);
+
+    Auto* temp = head;
+    int foundCount = 0;
+    while (temp != nullptr) {
+        string lowerColor = temp->color;
+        for (char& c : lowerColor) c = tolower(c);
+
+        if (lowerColor.find(lowerSearch) != string::npos) {
+            foundCount++;
+            cout << "\n--- Автомобиль №" << foundCount << " ---\n";
+            cout << "VIN:" << temp->VIN << endl;
+            cout << "Марка:" << temp->marka << endl;
+            cout << "Модель:" << temp->model << endl;
+            cout << "Год выпуска:" << temp->god << endl;
+            cout << "Тип кузова:" << temp->kuzov << endl;
+            cout << "Цвет кузова:" << temp->color << endl;
+            cout << "Тип привода:" << temp->driveType << endl;
+            cout << "Цена:" << temp->cena << " руб." << endl;
+        }
+        temp = temp->next;
+    }
+
+    if (foundCount == 0)
+        cout << "\nАвтомобилей с цветом \"" << searchColor << "\" не найдено.\n";
+    else
+        cout << "\nВсего найдено: " << foundCount << "\n";
+
+    cout << "\nНажмите любую клавишу...";
+    _getch();
+}
+// Поиск по типу привода (частичное совпадение, без учёта регистра)
+void SearchByDriveType() {
+    system("cls");
+    SetTextColor(15);
+    cout << "=== ПОИСК ПО ТИПУ ПРИВОДА ===\n\n";
+
+    if (head == nullptr) {
+        cout << "База данных пуста.\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    string searchDrive;
+    cout << "Введите тип привода (или его часть): ";
+    getline(cin, searchDrive);
+
+    string lowerSearch = searchDrive;
+    for (char& c : lowerSearch) c = tolower(c);
+
+    Auto* temp = head;
+    int foundCount = 0;
+    while (temp != nullptr) {
+        string lowerDrive = temp->driveType;
+        for (char& c : lowerDrive) c = tolower(c);
+
+        if (lowerDrive.find(lowerSearch) != string::npos) {
+            foundCount++;
+            cout << "\n--- Автомобиль №" << foundCount << " ---\n";
+            cout << "VIN:" << temp->VIN << endl;
+            cout << "Марка:" << temp->marka << endl;
+            cout << "Модель:" << temp->model << endl;
+            cout << "Год выпуска:" << temp->god << endl;
+            cout << "Тип кузова:" << temp->kuzov << endl;
+            cout << "Цвет кузова:" << temp->color << endl;
+            cout << "Тип привода:" << temp->driveType << endl;
+            cout << "Цена:" << temp->cena << " руб." << endl;
+        }
+        temp = temp->next;
+    }
+
+    if (foundCount == 0)
+        cout << "\nАвтомобилей с типом привода \"" << searchDrive << "\" не найдено.\n";
+    else
+        cout << "\nВсего найдено: " << foundCount << "\n";
+
+    cout << "\nНажмите любую клавишу...";
+    _getch();
+}
+
+// Поиск по цене (точное совпадение)
+void SearchByPrice() {
+    system("cls");
+    SetTextColor(15);
+    cout << "=== ПОИСК ПО ЦЕНЕ ===\n\n";
+
+    if (head == nullptr) {
+        cout << "База данных пуста.\nНажмите любую клавишу...";
+        _getch();
+        return;
+    }
+
+    int searchPrice;
+    cout << "Введите цену в рублях: ";
+    cin >> searchPrice;
+    cin.ignore();
+
+    Auto* temp = head;
+    int foundCount = 0;
+    while (temp != nullptr) {
+        if (temp->cena == searchPrice) {
+            foundCount++;
+            cout << "\n--- Автомобиль №" << foundCount << " ---\n";
+            cout << "VIN:" << temp->VIN << endl;
+            cout << "Марка:" << temp->marka << endl;
+            cout << "Модель:" << temp->model << endl;
+            cout << "Год выпуска:" << temp->god << endl;
+            cout << "Тип кузова:" << temp->kuzov << endl;
+            cout << "Цвет кузова:" << temp->color << endl;
+            cout << "Тип привода:" << temp->driveType << endl;
+            cout << "Цена:" << temp->cena << " руб." << endl;
+        }
+        temp = temp->next;
+    }
+
+    if (foundCount == 0)
+        cout << "\nАвтомобилей с ценой " << searchPrice << " руб. не найдено.\n";
+    else
+        cout << "\nВсего найдено: " << foundCount << "\n";
+
+    cout << "\nНажмите любую клавишу...";
+    _getch();
+}
+
+// Функция удаления автомобиля по его уникальному номеру (VIN)
+void DeleteByVin() {
+    system("cls");
+    SetTextColor(15);
+    cout << "=== УДАЛЕНИЕ АВТОМОБИЛЯ ПО НОМЕРУ ===\n\n";
+
+    // Проверяем, есть ли вообще машины в базе
+    if (head == nullptr) {
+        cout << "База данных пуста.\n";
         cout << "Нажмите любую клавишу...";
         _getch();
         return;
     }
 
-    // Сдвигаем элементы влево
-    for (int i = index; i < countCars - 1; i++)
-    {
-        baza[i] = baza[i + 1];
-    }
-    countCars--;
+    string delVin;
+    cout << "Введите VIN удаляемого автомобиля: ";
+    getline(cin, delVin);
 
-    cout << "\nАвтомобиль удалён!\n";
-    cout << "Нажмите любую клавишу...";
+    // Два указателя для перемещения по списку:
+    // curr — текущий автомобиль, который мы проверяем
+    // prev — предыдущий автомобиль
+    Auto* curr = head;
+    Auto* prev = nullptr;
+
+    while (curr != nullptr) {
+        if (curr->VIN == delVin) {
+            if (prev == nullptr) {
+                head = curr->next;
+            }
+            else {
+                // Удаление из середины или конца
+                prev->next = curr->next;
+            }
+
+            delete curr;
+
+            SetTextColor(2);
+            cout << "\nАвтомобиль успешно удалён.\n";
+            SetTextColor(15);
+            cout << "\nНажмите любую клавишу...";
+            _getch();
+            return;
+        }
+
+        prev = curr;
+        curr = curr->next;
+    }
+
+    cout << "\nАвтомобиль с VIN \"" << delVin << "\" не найден.\n";
+    cout << "\nНажмите любую клавишу...";
     _getch();
 }
+
 
 void PrintFilteredData()
 {
     system("cls");
     cout << "Автомобили дороже среднего:\n\n";
 
-    if (countCars == 0)
-    {
+    if (countCars == 0) {
         cout << "База пуста!\n";
         cout << "Нажмите любую клавишу...";
         _getch();
@@ -266,8 +644,7 @@ void PrintFilteredData()
 
     // Считаем среднюю цену
     double sum = 0;
-    for (int i = 0; i < countCars; i++)
-    {
+    for (int i = 0; i < countCars; i++) {
         sum += baza[i].cena;
     }
     double avg = sum / countCars;
@@ -276,24 +653,21 @@ void PrintFilteredData()
     cout << "----------------------------------------\n";
 
     bool found = false;
-    for (int i = 0; i < countCars; i++)
-    {
-        if (baza[i].cena > avg)
-        {
-            cout << "ID: " << baza[i].id << "\n"
+    for (int i = 0; i < countCars; i++) {
+        if (baza[i].cena > avg) {
+            cout << "VIN: " << baza[i].VIN << "\n"
                 << "Марка: " << baza[i].marka << "\n"
                 << "Модель: " << baza[i].model << "\n"
                 << "Год: " << baza[i].god << "\n"
                 << "Кузов: " << baza[i].kuzov << "\n"
-                << "Гос Номер: " << baza[i].nomer << "\n"
+                << "Гос Номер: " << baza[i].driveType << "\n"
                 << "Цена: " << baza[i].cena << " руб.\n"
                 << "----------------------------------------\n";
             found = true;
         }
     }
 
-    if (!found)
-    {
+    if (!found) {
         cout << "Нет автомобилей дороже среднего.\n";
     }
 
@@ -301,26 +675,34 @@ void PrintFilteredData()
     _getch();
 }
 
-bool SaveData()
-{
-    ofstream outFile("autos.txt");
-    if (!outFile.is_open())
-    {
+bool SaveData() {
+    ofstream outFile(fileName);
+    if (!outFile.is_open()) {
         cout << "Ошибка: не удалось открыть файл для записи!\n";
         return false;
     }
 
-    outFile << countCars << endl;
+    // Подсчёт количества элементов
+    int count = 0;
+    Auto* temp = head;
+    while (temp != nullptr) {
+        count++;
+        temp = temp->next;
+    }
+    outFile << count << endl;
 
-    for (int i = 0; i < countCars; i++)
-    {
-        outFile << baza[i].id << endl;
-        outFile << baza[i].marka << endl;
-        outFile << baza[i].model << endl;
-        outFile << baza[i].god << endl;
-        outFile << baza[i].kuzov << endl;
-        outFile << baza[i].nomer << endl;
-        outFile << baza[i].cena << endl;
+    // Запись всех полей
+    temp = head;
+    while (temp != nullptr) {
+        outFile << temp->VIN << endl;
+        outFile << temp->marka << endl;
+        outFile << temp->model << endl;
+        outFile << temp->god << endl;
+        outFile << temp->kuzov << endl;
+        outFile << temp->color << endl;
+        outFile << temp->driveType << endl;
+        outFile << temp->cena << endl;
+        temp = temp->next;
     }
 
     outFile.close();
@@ -330,62 +712,89 @@ bool SaveData()
 
 void AddData()
 {
-    system("cls");  // Очистка экрана
-    cout << "========================= Добавить автомабиль========================= :\n";
-    // здесь реализуете свой алгоритм
-    cout << "Введите ID: ";
-        getline(cin, baza[countCars].id);
-    cout << "Введите Марку: ";
-    getline(cin, baza[countCars].marka);
-    cout << "Введите Модель: ";
-    getline(cin, baza[countCars].model);
-    cout << "Введите Год: ";
-    cin >> baza[countCars].god;
+    system("cls");
+    SetTextColor(15);
+    cout << "=== ДОБАВЛЕНИЕ АВТОМОБИЛЯ ===\n\n";
+
+    Auto* newAuto = new Auto;
+    newAuto->next = nullptr;
+
+    cout << "Введите уникальный номер VIN (17 символов): ";
+    getline(cin, newAuto->VIN);
+
+    cout << "Введите марку (до 15 символов): ";
+    getline(cin, newAuto->marka);
+
+    cout << "Введите модель (до 25 символов): ";
+    getline(cin, newAuto->model);
+
+    cout << "Введите год выпуска: ";
+    cin >> newAuto->god;
     cin.ignore();
-    cout << "Введите Кузов: ";
-    getline(cin, baza[countCars].kuzov);
-    cout << "Введите Номер: ";
-    getline(cin, baza[countCars].nomer);
-    cout << "Введите Цену: ";
-    cin >> baza[countCars].cena;
+
+    cout << "Введите тип кузова (до 15 символов): ";
+    getline(cin, newAuto->kuzov);
+
+    cout << "Введите цвет кузова (до 12 символов): ";
+    getline(cin, newAuto->color);
+
+    cout << "Введите тип привода (до 10 символов): ";
+    getline(cin, newAuto->driveType);
+
+    cout << "Введите цену в рублях: ";
+    cin >> newAuto->cena;
     cin.ignore();
-    countCars++;
-    cout << "\nДобавлено! Нажмите клавишу...";
+
+    // Добавление в конец связного списка
+    if (head == nullptr) {
+        head = newAuto;
+    }
+    else {
+        Auto* temp = head;
+        while (temp->next != nullptr) {
+            temp = temp->next;
+        }
+        temp->next = newAuto;
+    }
+
+    SetTextColor(2);
+    cout << "\nАвтомобиль успешно добавлен!\n";
+    SetTextColor(15);
+    cout << "Нажмите любую клавишу...";
     _getch();
 }
+
 bool LoadData()
 {
-    ifstream inFile("autos.txt");
-    if (!inFile.is_open())
-    {
+    ifstream inFile(fileName);
+    if (!inFile.is_open()) {
         cout << "Файл базы данных не найден. Будет создана новая база.\n";
         return false;
     }
 
     int loadedCount;
     inFile >> loadedCount;
-    if (loadedCount > 100)
-    {
+    if (loadedCount > 100) {
         cout << "Ошибка: в файле больше записей, чем может вместить программа.\n";
         inFile.close();
         return false;
     }
 
     countCars = 0;
-    for (int i = 0; i < loadedCount; i++)
-    {
+    for (int i = 0; i < loadedCount; i++) {
         string temp;
         getline(inFile, temp); // скипаем перевод строки после числа
 
-        if (!getline(inFile, baza[i].id)) break;
+        if (!getline(inFile, baza[i].VIN)) break;
         if (!getline(inFile, baza[i].marka)) break;
         if (!getline(inFile, baza[i].model)) break;
         if (!(inFile >> baza[i].god)) break;
         inFile.ignore();
         if (!getline(inFile, baza[i].kuzov)) break;
-        if (!getline(inFile, baza[i].nomer)) break;
+        if (!getline(inFile, baza[i].driveType)) break;
         if (!(inFile >> baza[i].cena)) break;
         inFile.ignore();
+
         countCars++;
     }
 
@@ -393,107 +802,81 @@ bool LoadData()
     cout << "Загружено " << countCars << " записей из файла " << fileName << endl;
     return true;
 }
+
 // вывод в консоль меню программы
-char MainMenu()
-{
-    while (true) // бесконечный цикл
-    {
-        system("cls"); // чистим экран
+// Главное меню (выводит пункты и возвращает нажатую клавишу)
+char MainMenu() {
+    while (true) {
+        system("cls");
         SetTextColor(15);
-        cout << " УЧЕТ ПОДДЕРЖАННЫХ АВТОМОБИЛЕЙ \n\n"; // выводим название программы, оно у каждого буде свое
-        // выводим строки меню, цивра в скобках - клавиша, которую нужно нажать для выбора соответствующего действия
-        cout << "Привет " << endl;
+        cout << " УЧЕТ ПОДДЕРЖАННЫХ АВТОМОБИЛЕЙ \n\n";
+
         SetTextColor(2);
-        cout << "[1] Добавить автомобиль" << endl;
-        cout << "[2] Вывод списка автомобилей" << endl;
-        cout << "[3] Поиск автомобиля по гос.номеру" << endl;
-        cout << "[4] Поиск автомобиля по марке" << endl;
-        cout << "[5] Поиск автомобиля по модели" << endl;
-        cout << "[6] поиск автомобиля по типу кузова" << endl;
-        cout << "[7] удалить автомобиль по номеру" << endl;
-        cout << "[8] сохранение" << endl;
+        cout << "[1]  Добавить автомобиль\n";
+        cout << "[2]  Вывод списка автомобилей\n";
+        cout << "[3]  Поиск по номеру (VIN)\n";
+        cout << "[4]  Поиск по марке\n";
+        cout << "[5]  Поиск по модели\n";
+        cout << "[6]  Поиск по типу кузова\n";
+        cout << "[7]  Поиск по году выпуска\n";
+        cout << "[8]  Поиск по цвету кузова\n";
+        cout << "[9]  Поиск по типу привода\n";
+        cout << "[10] Поиск по цене\n";
+        cout << "[11] Редактировать автомобиль\n";
         SetTextColor(4);
-        cout << "[9] Выйти из программы\n" << endl;
+        cout << "[12] Удалить автомобиль по номеру\n";
+        cout << "[13] Выйти из программы\n\n";
+
         SetTextColor(15);
-        cout << "Выш выбор > ";
-        char choice = _getch(); // считываем нажатую пользователем клавишу
-        if (choice < '1' || choice > '8') // проверяем, соответствует ли клавиша пунктам меню
-        {       // если нет, то требуем повторить ввод
+        cout << "Ваш выбор > ";
+
+        int choice;
+        cin >> choice;
+        cin.ignore(); // Очистка буфера после ввода числа
+
+        if (choice >= 1 && choice <= 13) {
+            return choice;   // Возвращаем ЧИСЛО, а не символ
+        }
+        else {
             cout << "Такого варианта не существует! Нажмите любую клавишу...";
             _getch();
         }
-        else
-        {       // если соответствует, то возвращаем в вызываемую программу символ
-                // соответствующий нажатой клавише
-            return choice;
-        }
-
     }
-
 }
-// обработка действий пользователя
-void HandleEvents()
-{
-    char choice = 9;
-    while (choice != '0') // цикл пока пользователь не нажал ВЫХОД
-    {
-        choice = MainMenu(); // определяем, какой пункт меню выбрал пользователь
-        // переменная choice будет хранить символ, соответствующий
-        // выбранному пункту меню
-        switch (choice) // проверяем какую клавишу нажал пользователь
-        {
-        case '1': // если 1 то вызываем функцию добавления данных
-            AddData();
-            break;
-        case '2': // если 2 то вызываем функцию вывода данных
-            PrintData();
-            break;
-        case '3': // если 3 то вызываем функцию редактирования данных
-            EditData();
-            break;
-        case '4': // если 4 то вызываем функцию удаления данных
-            break;
-        case '5': // если 5 то вызываем функцию вывода данных по критерию отбора
-            PrintFilteredData();
-            break;
-        case '6': // если 6 то вызываем функцию сохранения данных
-            SaveData();
-            break;
-        case '7': // если 7 то вызываем функцию удаления данных
-            DeleteData();
-            break;
-        case '8': // если 8 то вызываем функцию сохранения данных
-            SaveData();
-            break;
-        case '9': // если 9 то выходим
-            return;
+
+// Обработка действий пользователя в главном цикле
+void HandleEvents() {
+    int choice = 0;                        // Хранит номер выбранного пункта
+    while (choice != 13) {                 // 13 — это выход из программы
+        choice = MainMenu();               // Получаем выбор от 1 до 13
+        switch (choice) {
+        case 1:  AddData(); break;          // Добавление автомобиля
+        case 2:  PrintData(); break;        // Вывод списка всех авто
+        case 3:  SearchByVin(); break;      // Поиск по VIN
+        case 4:  SearchByBrand(); break;    // Поиск по марке
+        case 5:  SearchByModel(); break;    // Поиск по модели
+        case 6:  SearchByBodyType(); break; // Поиск по типу кузова
+        case 7:  SearchByYear(); break;     // Поиск по году выпуска
+        case 8:  SearchByColor(); break;    // Поиск по цвету кузова
+        case 9:  SearchByDriveType(); break;// Поиск по типу привода
+        case 10: SearchByPrice(); break;    // Поиск по цене
+        case 11: EditData(); break;         // Редактирование автомобиля
+        case 12: DeleteByVin(); break;      // Удаление по VIN
+        case 13: return;                    // Завершение программы
         }
     }
 }
 
-int main()
-{
-    setlocale(LC_ALL, "Russian"); // Установка кодировки для Windows
-
-    // Сначала проверяем вход
+int main() {
+    SetConsoleOutputCP(1251);
     if (!LOGIN_IN()) {
-        cout << "\nПрограмма завершена из-за неудачной попытки входа." << endl;
+        cout << "\nПрограмма завершена.\n";
         _getch();
-        return 0; // Выход из программs   если пароль неверный
+        return 0;
     }
     setlocale(LC_ALL, "");
-    PrintData();
-    AddData();
-    HandleEvents(); // вызываем функцию обработки нажатий клавиш пользователем
-    SaveData(); // при выходе сохраняем данные в базе данных
-// Загрузка данных
-if (!LoadData())
-{
-    cout << "\n\tОшибка загрузки базы данных.\n";
-    _getch();
-    return 1;
+    LoadData();       // Загружаем базу из файла
+    HandleEvents();   // Работа с меню
+    SaveData();       // Сохраняем перед выходом
+    return 0;
 }
-// Сохранение при выходе
-SaveData();
-}
-
