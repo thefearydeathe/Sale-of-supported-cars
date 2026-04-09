@@ -15,7 +15,6 @@ using namespace std;
 // Имя файла, куда сохроняеться
 Auto* head = nullptr;
 string fileName = "autos.txt";
-const int width = 80;
 bool LOGIN_IN()
 {
     string login, password;
