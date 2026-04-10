@@ -162,7 +162,7 @@ void AddData()
     SetTextColor(2);
     cout << "\nАвтомобиль успешно добавлен!\n";
     SetTextColor(15);
-    SaveData();  
+    SaveData();
     cout << "Нажмите любую клавишу...";
     _getch();
 }
@@ -186,7 +186,7 @@ void EditData() {
     Auto* temp = head;
     while (temp != nullptr) {
         if (temp->VIN == searchVin) {
-            break; 
+            break;
         }
         temp = temp->next;
     }
@@ -237,7 +237,7 @@ void EditData() {
     SetTextColor(2);
     cout << "\nДанные успешно обновлены!\n";
     SetTextColor(15);
-    SaveData();  
+    SaveData();
     cout << "\nНажмите любую клавишу...";
     _getch();
 }
@@ -405,7 +405,7 @@ void SearchByYear() {
     }
     string searchYear;
     cout << "Введите год выпуска: ";
-    getline(cin, searchYear); 
+    getline(cin, searchYear);
     Auto* temp = head;
     int foundCount = 0;
     while (temp != nullptr) {
@@ -815,21 +815,46 @@ char MainMenu() {
 void HandleEvents() {
     int choice = 0;                        // Хранит номер выбранного пункта
     while (choice != 13) {                 // 13 — это выход из программы
-        choice = MainMenu();               // Получаем выбор от 1 до 13
+        choice = MainMenu();
         switch (choice) {
-        case 1:  AddData(); break;          // Добавление автомобиля
-        case 2:  PrintData(); break;        // Вывод списка всех авто
-        case 3:  SearchByVin(); break;      // Поиск по VIN
-        case 4:  SearchByBrand(); break;    // Поиск по марке
-        case 5:  SearchByModel(); break;    // Поиск по модели
-        case 6:  SearchByBodyType(); break; // Поиск по типу кузова
-        case 7:  SearchByYear(); break;     // Поиск по году выпуска
-        case 8:  SearchByColor(); break;    // Поиск по цвету кузова
-        case 9:  SearchByDriveType(); break;// Поиск по типу привода
-        case 10: SearchByPrice(); break;    // Поиск по цене
-        case 11: EditData(); break;         // Редактирование автомобиля
-        case 12: DeleteByVin(); break;      // Удаление по VIN
-        case 13: return;                    // Завершение программы
+        case 1:
+            AddData();
+            break;          // Добавление автомобиля
+        case 2:
+            PrintData();
+            break;        // Вывод списка всех авто
+        case 3:
+            SearchByVin();
+            break;      // Поиск по VIN
+        case 4:
+            SearchByBrand();
+            break;    // Поиск по марке
+        case 5:
+            SearchByModel();
+            break;    // Поиск по модели
+        case 6:
+            SearchByBodyType();
+            break; // Поиск по типу кузова
+        case 7:
+            SearchByYear();
+            break;     // Поиск по году выпуска
+        case 8:
+            SearchByColor();
+            break;    // Поиск по цвету кузова
+        case 9:
+            SearchByDriveType();
+            break;// Поиск по типу привода
+        case 10:
+            SearchByPrice();
+            break;    // Поиск по цене
+        case 11:
+            EditData();
+            break;         // Редактирование автомобиля
+        case 12:
+            DeleteByVin();
+            break;      // Удаление по VIN
+        case 13:
+            return;                    // Завершение программы
         }
     }
 }
